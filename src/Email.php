@@ -12,7 +12,7 @@ class Email
 
     protected(set) string $domain;
 
-    public function __construct(private string $emailAddress)
+    public function __construct(protected(set) string $emailAddress)
     {
         [$this->localPart, $this->domain] = explode('@', $emailAddress);
     }
