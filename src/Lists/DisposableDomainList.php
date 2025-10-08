@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AshAllenDesign\EmailUtilities;
+namespace AshAllenDesign\EmailUtilities\Lists;
 
 class DisposableDomainList
 {

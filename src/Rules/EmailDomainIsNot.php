@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AshAllenDesign\EmailUtilities\Rules;
 
 use AshAllenDesign\EmailUtilities\Email;
+use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
@@ -26,5 +27,10 @@ class EmailDomainIsNot implements ValidationRule
         if (new Email($value)->domainIs($this->patterns)) {
             $fail('The :attribute domain is not allowed.');
         }
+    }
+
+    public static function disposable(): self
+    {
+        return new self(patterns: DisposableDomainList::get());
     }
 }

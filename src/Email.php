@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AshAllenDesign\EmailUtilities;
 
+use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
+use AshAllenDesign\EmailUtilities\Lists\RoleAccountList;
 use Illuminate\Support\Str;
 
 class Email
@@ -28,18 +30,11 @@ class Email
 
     public function isRoleAccount(): bool
     {
-        $roleAccounts = [
-            'admin',
-            'administrator',
-            'contact',
-            'info',
-            'sales',
-            'support',
-            'help',
-            'office',
-        ];
-
-        return in_array(strtolower($this->localPart), $roleAccounts, true);
+        return in_array(
+            needle: strtolower($this->localPart),
+            haystack: RoleAccountList::get(),
+            strict: true,
+        );
     }
 
     public function domainIs(array $patterns): bool

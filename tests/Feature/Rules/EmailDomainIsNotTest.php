@@ -42,4 +42,14 @@ class EmailDomainIsNotTest extends TestCase
             fail: fn () => $this->assertTrue(true),
         );
     }
+
+    #[Test]
+    public function rule_fails_if_the_value_is_a_disposable_email(): void
+    {
+        EmailDomainIsNot::disposable()->validate(
+            attribute: 'email',
+            value: 'hello@0-mail.com',
+            fail: fn () => $this->assertTrue(true),
+        );
+    }
 }
