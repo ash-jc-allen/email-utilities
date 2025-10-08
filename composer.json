@@ -1,0 +1,51 @@
+{
+  "name": "ashallendesign/email-utilities",
+  "description": "A Laravel package containing some useful utilities for working with email addresses.",
+  "type": "library",
+  "homepage": "https://github.com/ash-jc-allen/email-utilities",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ash Allen",
+      "email": "mail@ashallendesign.co.uk"
+    }
+  ],
+  "keywords": [
+    "ashallendesign",
+    "laravel",
+    "email-utilities",
+    "email"
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/validation": "^12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^10.0",
+    "phpunit/phpunit": "^11.0",
+    "larastan/larastan": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AshAllenDesign\\EmailUtilities\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+        "AshAllenDesign\\EmailUtilities\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AshAllenDesign\\EmailUtilities\\EmailUtilitiesProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "larastan": "vendor/bin/phpstan analyse"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
