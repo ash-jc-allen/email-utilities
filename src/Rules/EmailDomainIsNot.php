@@ -12,6 +12,9 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class EmailDomainIsNot implements ValidationRule
 {
+    /**
+     * @param list<string> $patterns
+     */
     public function __construct(protected array $patterns)
     {
         //

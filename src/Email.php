@@ -37,11 +37,17 @@ class Email
         );
     }
 
+    /**
+     * @param list<string> $patterns
+     */
     public function domainIs(array $patterns): bool
     {
         return Str::is($patterns, $this->domain);
     }
 
+    /**
+     * @param list<string> $patterns
+     */
     public function domainIsNot(array $patterns): bool
     {
         return ! $this->domainIs($patterns);
