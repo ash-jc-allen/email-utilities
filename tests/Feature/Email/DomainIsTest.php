@@ -21,7 +21,7 @@ class DomainIsTest extends TestCase
     #[Test]
     public function true_is_returned_if_the_domain_matches_a_pattern(string $email, array $patterns): void
     {
-        $this->assertTrue(new Email($email)->domainIs($patterns));
+        $this->assertTrue((new Email($email))->domainIs($patterns));
     }
 
     #[TestWith(['fails@example.com', ['test.com']])]
@@ -29,6 +29,6 @@ class DomainIsTest extends TestCase
     #[Test]
     public function false_is_returned_if_the_domain_does_not_match_a_pattern(string $email, array $patterns): void
     {
-        $this->assertFalse(new Email($email)->domainIs($patterns));
+        $this->assertFalse((new Email($email))->domainIs($patterns));
     }
 }

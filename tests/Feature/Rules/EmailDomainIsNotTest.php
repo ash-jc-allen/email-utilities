@@ -36,7 +36,7 @@ class EmailDomainIsNotTest extends TestCase
     #[Test]
     public function rule_fails_if_the_domain_matches_a_pattern(string $email, array $patterns): void
     {
-        new EmailDomainIsNot($patterns)->validate(
+        (new EmailDomainIsNot($patterns))->validate(
             attribute: 'email',
             value: $email,
             fail: fn () => $this->assertTrue(true),

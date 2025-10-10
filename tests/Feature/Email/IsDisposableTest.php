@@ -14,7 +14,7 @@ class IsDisposableTest extends TestCase
     public function true_is_returned_if_the_email_address_is_disposable(): void
     {
         $this->assertTrue(
-            new Email('hello@0-mail.com')->isDisposable()
+            (new Email('hello@0-mail.com'))->isDisposable()
         );
     }
 
@@ -22,7 +22,7 @@ class IsDisposableTest extends TestCase
     public function false_is_returned_if_the_email_address_is_not_disposable(): void
     {
         $this->assertFalse(
-            new Email('hello@0-mail.co.uk')->isDisposable()
+            (new Email('hello@0-mail.co.uk'))->isDisposable()
         );
     }
 }
