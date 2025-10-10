@@ -10,13 +10,28 @@ use Illuminate\Support\Str;
 
 class Email
 {
-    protected(set) string $localPart;
+    protected string $localPart;
 
-    protected(set) string $domain;
+    protected string $domain;
 
-    public function __construct(protected(set) string $emailAddress)
+    public function __construct(protected string $emailAddress)
     {
         [$this->localPart, $this->domain] = explode('@', $emailAddress);
+    }
+
+    public function localPart(): string
+    {
+        return $this->localPart;
+    }
+
+    public function domain(): string
+    {
+        return $this->domain;
+    }
+
+    public function address(): string
+    {
+        return $this->emailAddress;
     }
 
     public function isDisposable(): bool
