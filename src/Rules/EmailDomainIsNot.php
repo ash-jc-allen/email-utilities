@@ -28,7 +28,7 @@ class EmailDomainIsNot implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (new Email($value)->domainIs($this->patterns)) {
+        if ((new Email($value))->domainIs($this->patterns)) {
             $fail('The :attribute domain is not allowed.');
         }
     }

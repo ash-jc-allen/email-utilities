@@ -14,7 +14,7 @@ class IsRoleAccountTest extends TestCase
     public function true_is_returned_if_the_email_address_is_for_a_role_account(): void
     {
         $this->assertTrue(
-            new Email('sales@example.com')->isRoleAccount()
+            (new Email('sales@example.com'))->isRoleAccount()
         );
     }
 
@@ -22,7 +22,7 @@ class IsRoleAccountTest extends TestCase
     public function false_is_returned_if_the_email_address_is_for_a_role_account(): void
     {
         $this->assertFalse(
-            new Email('mail-123@example.com')->isRoleAccount()
+            (new Email('mail-123@example.com'))->isRoleAccount()
         );
     }
 }
