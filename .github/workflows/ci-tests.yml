@@ -1,10 +1,10 @@
-name: run-tests
+name: Tests
 
 on:
   pull_request:
 
 jobs:
-  run-tests:
+  phpunit:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

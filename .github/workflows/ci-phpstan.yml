@@ -1,10 +1,10 @@
-name: run-phpstan
+name: Static Analysis
 
 on:
   pull_request:
 
 jobs:
-  run-tests:
+  phpstan:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
