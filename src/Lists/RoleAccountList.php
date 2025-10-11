@@ -23,7 +23,7 @@ class RoleAccountList
     /**
      * @return list<string>
      */
-    public static function get():array
+    public static function get(): array
     {
         return self::$roleAccountList;
     }
