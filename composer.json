@@ -22,7 +22,7 @@
   },
   "require-dev": {
     "orchestra/testbench": "^9.0|^10.0",
-    "phpunit/phpunit": "^11.0",
+    "phpunit/phpunit": "^11.0 || ^12.0",
     "larastan/larastan": "^3.0",
     "friendsofphp/php-cs-fixer": "^3.88"
   },
