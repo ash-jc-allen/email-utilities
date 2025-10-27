@@ -6,10 +6,10 @@ namespace AshAllenDesign\EmailUtilities\Tests\Feature\Lists;
 
 use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
 use AshAllenDesign\EmailUtilities\Tests\Feature\TestCase;
-use ErrorException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
-use JsonException;
 use PHPUnit\Framework\Attributes\Test;
+use TypeError;
 
 class DisposableDomainListTest extends TestCase
 {
@@ -32,7 +32,7 @@ class DisposableDomainListTest extends TestCase
     #[Test]
     public function exception_is_thrown_if_the_custom_list_does_not_exist(): void
     {
-        $this->expectException(ErrorException::class);
+        $this->expectException(FileNotFoundException::class);
 
         config(['email-utilities.disposable_email_list_path' => './invalid-path.json']);
 
@@ -42,7 +42,7 @@ class DisposableDomainListTest extends TestCase
     #[Test]
     public function exception_is_thrown_if_the_list_is_not_valid_json(): void
     {
-        $this->expectException(JsonException::class);
+        $this->expectException(TypeError::class);
 
         File::put('./tests/Feature/Lists/disposable-domains-test.json', 'NOT VALID JSON');
 
