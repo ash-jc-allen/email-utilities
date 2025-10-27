@@ -52,7 +52,9 @@ class EmailUtilitiesProvider extends ServiceProvider
             ]);
 
         if (! $passes) {
-            $validationMessage = $validator->errors()[array_key_first($validator->errors())][0];
+            $errorKey = (string) array_key_first($validator->errors());
+
+            $validationMessage = $validator->errors()[$errorKey][0];
 
             throw new ValidationException($validationMessage);
         }
