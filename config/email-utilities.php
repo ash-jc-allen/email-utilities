@@ -28,5 +28,5 @@ return [
     | AshAllenDesign\EmailUtilities\Exceptions\ValidationException
     |
     */
-    'validate_config' => true,
+    'validate_config' => false,
 ];
