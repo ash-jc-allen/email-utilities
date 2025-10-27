@@ -16,6 +16,10 @@ class EmailUtilitiesProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
+            __DIR__.'/../config/email-utilities.php' => config_path('email-utilities.php'),
+        ], groups: ['email-utilities-config']);
+
+        $this->publishes([
             __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
         ], groups: ['email-utilities-lists']);
     }
