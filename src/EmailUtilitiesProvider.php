@@ -30,6 +30,7 @@ class EmailUtilitiesProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
+            __DIR__.'/../lists/role-accounts.json' => base_path('role-accounts.json'),
         ], groups: ['email-utilities-lists']);
 
         $this->validateConfig();
@@ -48,6 +49,7 @@ class EmailUtilitiesProvider extends ServiceProvider
             ->runInline([
                 'email-utilities' => [
                     Rule::make('disposable_email_list_path')->rules(['nullable', 'string']),
+                    Rule::make('role_account_list_path')->rules(['nullable', 'string']),
                 ],
             ]);
 

@@ -22,13 +22,27 @@ class EmailUtilitiesProviderTest extends TestCase
     }
 
     #[Test]
-    public function package_cannot_boot_if_the_config_is_invalid_and_config_validation_is_enabled(): void
+    public function package_cannot_boot_if_the_disposable_email_list_path_config_field_is_invalid_and_config_validation_is_enabled(): void
     {
         $this->expectException(ValidationException::class);
 
         config([
             'email-utilities.validate_config' => true,
             'email-utilities.disposable_email_list_path' => ['INVALID'],
+        ]);
+
+        $this->getProvider()->boot();
+    }
+
+    #[Test]
+    public function package_cannot_boot_if_the_role_account_list_path_config_field_is_invalid_and_config_validation_is_enabled(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        config([
+            'email-utilities.validate_config' => true,
+            'email-utilities.disposable_email_list_path' => 'hello',
+            'email-utilities.role_account_list_path' => ['INVALID'],
         ]);
 
         $this->getProvider()->boot();
