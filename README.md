@@ -54,6 +54,14 @@ You can install the package via Composer:
 composer require ashallendesign/email-utilities
 ```
 
+After installing the package, you can then publish the configuration file using the following command:
+
+```bash
+php artisan php artisan vendor:publish --tag=email-utilities-config
+```
+
+Running this command will create a `config/email-utilities.php` file.
+
 ## Usage
 
 ## The `Email` Class
@@ -214,6 +222,28 @@ $request->validate([
     'email' => ['required', 'email', EmailDomainIsNot::disposable()],
 ]);
 ```
+
+## Config
+
+The package provides several options that can be configured via the published configuration file located at `config/email-utilities.php`.
+
+### Disposable Email Domains List
+
+By default, the package uses a built-in list of disposable email address domains defined in the `AshAllenDesign\EmailUtilities\Lists\DisposableDomainList` class. Over time, this list may change as new disposable email address providers are created.
+
+However, you can maintain your own list of disposable domains by setting the `disposable_email_list_path` configuration option like so:
+
+```php
+'disposable_email_list_path' => './storage/app/disposable_email_domains.json',
+```
+
+You can also publish the package's built-in list to your application by running the following command:
+
+```text
+php artisan vendor:publish --tag=email-utilities-lists
+```
+
+This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file.
 
 ## Testing
 
