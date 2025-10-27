@@ -25,6 +25,8 @@
     * [Validation Rules](#validation-rules)
       + [`EmailDomainIs` Rule](#emaildomainis-rule)
       + [`EmailDomainIsNot` Rule](#emaildomainisnot-rule)
+- [Config](#config)
+    * [Disposable Email Domains List](#disposable-email-domains-list)
 - [Testing](#testing)
 - [Security](#security)
 - [Contribution](#contribution)
