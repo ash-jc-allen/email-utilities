@@ -9,22 +9,14 @@ use Illuminate\Support\ServiceProvider;
 class EmailUtilitiesProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        // ...
-    }
-
-    /**
      * Bootstrap any application services.
      *
      * @return void
      */
     public function boot(): void
     {
-        // ...
+        $this->publishes([
+            __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
+        ], groups: ['email-utilities-lists']);
     }
 }
