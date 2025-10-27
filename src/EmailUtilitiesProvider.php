@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace AshAllenDesign\EmailUtilities;
 
+use AshAllenDesign\ConfigValidator\Services\ConfigValidator;
+use AshAllenDesign\ConfigValidator\Services\Rule;
+use AshAllenDesign\EmailUtilities\Exceptions\ValidationException;
 use Illuminate\Support\ServiceProvider;
 
 class EmailUtilitiesProvider extends ServiceProvider
 {
     /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(path: __DIR__.'/../config/email-utilities.php', key: 'email-utilities');
+    }
+
+    /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -22,5 +31,30 @@ class EmailUtilitiesProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
         ], groups: ['email-utilities-lists']);
+
+        $this->validateConfig();
+    }
+
+    private function validateConfig(): void
+    {
+        if (!config()->boolean('email-utilities.validate_config', default: false)) {
+            return;
+        }
+
+        $validator = app(ConfigValidator::class);
+
+        $passes = $validator
+            ->throwExceptionOnFailure(false)
+            ->runInline([
+                'email-utilities' => [
+                    Rule::make('disposable_email_list_path')->rules(['nullable', 'string']),
+                ],
+            ]);
+
+        if (! $passes) {
+            $validationMessage = $validator->errors()[array_key_first($validator->errors())][0];
+
+            throw new ValidationException($validationMessage);
+        }
     }
 }

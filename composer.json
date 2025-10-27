@@ -18,7 +18,8 @@
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/validation": "^11.0|^12.0"
+    "illuminate/validation": "^11.0|^12.0",
+    "ashallendesign/laravel-config-validator": "^2.9"
   },
   "require-dev": {
     "orchestra/testbench": "^9.0|^10.0",
