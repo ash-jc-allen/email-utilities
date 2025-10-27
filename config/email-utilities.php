@@ -24,7 +24,7 @@ return [
     | Specify whether the package should validate the configuration values in this
     | file when the package is booted. This helps to catch any misconfigurations
     | early. If the validation fails, the following exception will be thrown:
-
+    |
     | AshAllenDesign\EmailUtilities\Exceptions\ValidationException
     |
     */
