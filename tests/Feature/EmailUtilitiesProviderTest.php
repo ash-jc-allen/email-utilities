@@ -42,7 +42,7 @@ class EmailUtilitiesProviderTest extends TestCase
         config([
             'email-utilities.validate_config' => true,
             'email-utilities.disposable_email_list_path' => 'hello',
-            'email-utilities.role_account_list_path' => ['INVALID'],
+            'email-utilities.role_accounts_list_path' => ['INVALID'],
         ]);
 
         $this->getProvider()->boot();

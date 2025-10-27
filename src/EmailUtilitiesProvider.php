@@ -49,7 +49,7 @@ class EmailUtilitiesProvider extends ServiceProvider
             ->runInline([
                 'email-utilities' => [
                     Rule::make('disposable_email_list_path')->rules(['nullable', 'string']),
-                    Rule::make('role_account_list_path')->rules(['nullable', 'string']),
+                    Rule::make('role_accounts_list_path')->rules(['nullable', 'string']),
                 ],
             ]);
 
