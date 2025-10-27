@@ -16,6 +16,8 @@ class DisposableDomainListTest extends TestCase
     #[Test]
     public function default_disposable_domains_are_loaded_correctly(): void
     {
+        config(['email-utilities.disposable_email_list_path' => null]);
+
         $this->assertCount(4749, DisposableDomainList::get());
     }
 
