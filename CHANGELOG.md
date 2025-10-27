@@ -1,5 +1,11 @@
 # Changelog
 
+**v1.0.0 (released 2025-10-27):**
+
+- Added config file to allow customisation of validation rules. ([#8](https://github.com/ash-jc-allen/email-utilities/pull/8), [#11](https://github.com/ash-jc-allen/email-utilities/pull/11))
+- Added support for PHP 8.5. ([#10](https://github.com/ash-jc-allen/email-utilities/pull/10))
+- Added config validation to ensure valid config values are provided. ([#9](https://github.com/ash-jc-allen/email-utilities/pull/9))
+
 **v0.2.0 (released 2025-10-11):**
 
 - Added support for PHP 8.3. ([#3](https://github.com/ash-jc-allen/email-utilities/pull/3))
