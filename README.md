@@ -27,6 +27,7 @@
       + [`EmailDomainIsNot` Rule](#emaildomainisnot-rule)
 - [Config](#config)
     * [Disposable Email Domains List](#disposable-email-domains-list)
+    * [Role Accounts List](#role-accounts-list)
 - [Testing](#testing)
 - [Security](#security)
 - [Contribution](#contribution)
@@ -245,7 +246,15 @@ You can also publish the package's built-in list to your application by running 
 php artisan vendor:publish --tag=email-utilities-lists
 ```
 
-This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file.
+This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
+
+### Role Accounts List
+
+Similar to the disposable email domains list, by default, the package uses a built-in list of role-based email address prefixes defined in the `AshAllenDesign\EmailUtilities\Lists\RoleAccountList` class. However, you can maintain and provide your own list by setting the `role_account_list_path` configuration option like so:
+
+```php
+'role_accounts_list_path' => './storage/app/role_account_list.json',
+```
 
 ## Testing
 

@@ -18,6 +18,20 @@ return [
 
     /*
     |-----------------------------------------------------------------------------------
+    | Role Accounts List
+    |-----------------------------------------------------------------------------------
+    |
+    | Specify where the role accounts list is stored. If `null` is specified, the
+    | package's built-in list will be used. Otherwise, provide the relative path
+    | to the file, starting from the base path of your app. For example, if
+    | the file is stored in `storage/app/role_accounts.json`, you would
+    | specify `storage/app/role_accounts.json` here.
+    |
+    */
+    'role_accounts_list_path' => null,
+
+    /*
+    |-----------------------------------------------------------------------------------
     | Validate Config
     |-----------------------------------------------------------------------------------
     |
