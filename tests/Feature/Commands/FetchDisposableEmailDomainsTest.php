@@ -50,29 +50,4 @@ class FetchDisposableEmailDomainsTest extends TestCase
         // Cleanup
         File::delete($path);
     }
-
-
-    // TODO: Refactor to use Storage instead of File everywhere, so we can use Storage::fake() in tests, e.g.:
-    // #[Test]
-    // public function command_fetches_stores_and_logs_blocklist(): void
-    // {
-    //     Storage::fake();
-    //
-    //     $path = 'testing/disposable-domains.txt';
-    //     config(['email-utilities.disposable_email_list_path' => $path]);
-    //
-    //     $fakeBody = implode(PHP_EOL, array_fill(0, 1200, 'example.com'));
-    //
-    //     Http::fake([
-    //         FetchDisposableEmailDomains::BLOCKLIST_URL => $fakeBody,
-    //     ]);
-    //
-    //     $this->artisan(FetchDisposableEmailDomains::class)
-    //         ->expectsOutput('Blocklist successfully fetched and stored. Domain count: 1200')
-    //         ->assertExitCode(Command::SUCCESS);
-    //
-    //     Storage::assertExists($path);
-    //     $this->assertEquals($fakeBody, Storage::get($path));
-    //     $this->assertSame(strlen($fakeBody), Storage::size($path));
-    // }
 }
