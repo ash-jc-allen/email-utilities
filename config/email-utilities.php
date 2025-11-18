@@ -10,10 +10,11 @@ return [
     | Specify where the disposable email domains list is stored. If `null` is specified,
     | the package's built-in list will be used. Otherwise, provide the relative path
     | to the file, starting from the base path of your app. For example, if the
-    | file is stored in `storage/app/disposable_domains.csv`, you would
-    | specify `storage/app/disposable_domains.csv` here.
+    | file is stored in `storage/app/disposable-domains.txt`, you would
+    | specify `storage_path('app/disposable-domains.txt')` here.
     |
     */
+    // 'disposable_email_list_path' => storage_path('app/disposable-domains.txt'),
     'disposable_email_list_path' => null,
 
     /*
@@ -25,7 +26,7 @@ return [
     | package's built-in list will be used. Otherwise, provide the relative path
     | to the file, starting from the base path of your app. For example, if
     | the file is stored in `storage/app/role_accounts.json`, you would
-    | specify `storage/app/role_accounts.json` here.
+    | specify `storage_path('app/role_accounts.json')` here.
     |
     */
     'role_accounts_list_path' => null,

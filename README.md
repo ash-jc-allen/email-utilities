@@ -245,7 +245,7 @@ You can also publish the package's built-in list to your application by running 
 php artisan vendor:publish --tag=email-utilities-lists
 ```
 
-This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
+This will create a `disposable-domains.txt` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
 
 ### Role Accounts List
 

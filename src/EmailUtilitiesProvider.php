@@ -29,7 +29,7 @@ class EmailUtilitiesProvider extends ServiceProvider
         ], groups: ['email-utilities-config']);
 
         $this->publishes([
-            __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
+            __DIR__.'/../lists/disposable-domains.txt' => base_path('disposable-domains.txt'),
             __DIR__.'/../lists/role-accounts.json' => base_path('role-accounts.json'),
         ], groups: ['email-utilities-lists']);
 
