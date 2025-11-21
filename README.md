@@ -53,13 +53,13 @@ The package has been developed and tested to work with the following minimum req
 You can install the package via Composer:
 
 ```bash
-$ composer require ashallendesign/email-utilities
+composer require ashallendesign/email-utilities
 ```
 
 After installing the package, you can then publish the configuration file using the following command:
 
 ```bash
-$ php artisan vendor:publish --tag=email-utilities-config
+php artisan vendor:publish --tag=email-utilities-config
 ```
 
 Running this command will create a `config/email-utilities.php` file.
@@ -245,7 +245,7 @@ However, you can maintain your own list of disposable domains by setting the `di
 You can also publish the package's built-in list to your application by running the following command:
 
 ```bash
-$ php artisan vendor:publish --tag=email-utilities-lists
+php artisan vendor:publish --tag=email-utilities-lists
 ```
 
 This will create a `disposable-domains.txt` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
@@ -253,7 +253,7 @@ This will create a `disposable-domains.txt` file in your application's root dire
 Once you have configured `disposable_email_list_path`, we recommend to keep the list updated via our Artisan command:
 
 ```bash
-$ php artisan email-utilities:fetch-disposable-domains
+php artisan email-utilities:fetch-disposable-domains
 ```
 
 You may schedule this in your `routes/console.php` to run on a daily basis:
@@ -277,13 +277,13 @@ Similar to the disposable email domains list, by default, the package uses a bui
 To run the package's unit tests, run the following command:
 
 ``` bash
-$ composer test
+composer test
 ```
 
 To run Larastan for the package, run the following command:
 
 ```bash
-$ composer larastan
+composer larastan
 ```
 
 ## Security
