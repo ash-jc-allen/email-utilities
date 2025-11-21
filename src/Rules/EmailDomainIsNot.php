@@ -13,6 +13,11 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 class EmailDomainIsNot implements ValidationRule
 {
     /**
+     * Cache the patterns, so we don't load/parse the disposable domains file multiple times per request.
+     */
+    protected static ?array $patternsCache;
+
+    /**
      * @param list<string> $patterns
      */
     public function __construct(protected array $patterns)
@@ -35,6 +40,11 @@ class EmailDomainIsNot implements ValidationRule
 
     public static function disposable(): self
     {
-        return new self(patterns: DisposableDomainList::get());
+        return new self(static::$patternsCache ??= DisposableDomainList::get());
+    }
+
+    public static function flushPatternsCache(): void
+    {
+        self::$patternsCache = null;
     }
 }

@@ -25,11 +25,11 @@ class DisposableDomainListTest extends TestCase
     public function custom_disposable_domains_are_loaded_correctly(): void
     {
         File::put(
-            './tests/Feature/Lists/disposable-domains-test.json',
+            $path = './tests/Feature/Lists/disposable-domains-test.json',
             json_encode(['customdomain.com', 'hellodomain.com'])
         );
 
-        config(['email-utilities.disposable_email_list_path' => './tests/Feature/Lists/disposable-domains-test.json']);
+        config(['email-utilities.disposable_email_list_path' => $path]);
 
         $this->assertCount(2, DisposableDomainList::get());
     }
@@ -49,9 +49,9 @@ class DisposableDomainListTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        File::put('./tests/Feature/Lists/disposable-domains-test.json', 'NOT VALID JSON');
+        File::put($path = './tests/Feature/Lists/disposable-domains-test.json', 'NOT VALID JSON');
 
-        config(['email-utilities.disposable_email_list_path' => './tests/Feature/Lists/disposable-domains-test.json']);
+        config(['email-utilities.disposable_email_list_path' => $path]);
 
         DisposableDomainList::get();
     }
