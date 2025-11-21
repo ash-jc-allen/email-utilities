@@ -239,7 +239,7 @@ By default, the package uses a built-in list of disposable email address domains
 However, you can maintain your own list of disposable domains by setting the `disposable_email_list_path` configuration option like so:
 
 ```php
-'disposable_email_list_path' => storage_path('app/disposable-domains.txt'),
+'disposable_email_list_path' => storage_path('app/disposable-domains.json'),
 ```
 
 You can also publish the package's built-in list to your application by running the following command:
@@ -248,7 +248,7 @@ You can also publish the package's built-in list to your application by running 
 php artisan vendor:publish --tag=email-utilities-lists
 ```
 
-This will create a `disposable-domains.txt` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
+This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
 
 Once you have configured `disposable_email_list_path`, we recommend to keep the list updated via our Artisan command:
 

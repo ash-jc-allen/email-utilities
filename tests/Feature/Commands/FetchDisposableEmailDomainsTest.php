@@ -27,15 +27,16 @@ class FetchDisposableEmailDomainsTest extends TestCase
     public function command_fetches_stores_and_logs_blocklist(): void
     {
         // Use a file path inside Testbench's temporary storage directory
-        $path = storage_path('app/disposable-domains.txt');
+        $path = storage_path('app/disposable-domains.json');
 
         config(['email-utilities.disposable_email_list_path' => $path]);
 
         // Fake a valid blocklist with > 1000 lines
-        $fakeBody = implode(PHP_EOL, array_fill(0, 1200, 'example.com'));
+        $domains = array_fill(0, 1200, 'example.com');
+        $expectedJson = json_encode($domains, JSON_PRETTY_PRINT);
 
         Http::fake([
-            FetchDisposableEmailDomains::BLOCKLIST_URL => $fakeBody,
+            FetchDisposableEmailDomains::BLOCKLIST_URL => implode(PHP_EOL, $domains),
         ]);
 
         $this->artisan(FetchDisposableEmailDomains::class)
@@ -44,8 +45,8 @@ class FetchDisposableEmailDomainsTest extends TestCase
 
         // Assert file was written and contains correct contents
         $this->assertFileExists($path);
-        $this->assertSame($fakeBody, File::get($path));
-        $this->assertSame(strlen($fakeBody), File::size($path));
+        $this->assertSame($expectedJson, File::get($path));
+        $this->assertSame(strlen($expectedJson), File::size($path));
 
         // Cleanup
         File::delete($path);
