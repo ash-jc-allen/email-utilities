@@ -59,7 +59,7 @@ composer require ashallendesign/email-utilities
 After installing the package, you can then publish the configuration file using the following command:
 
 ```bash
-php artisan php artisan vendor:publish --tag=email-utilities-config
+php artisan vendor:publish --tag=email-utilities-config
 ```
 
 Running this command will create a `config/email-utilities.php` file.
