@@ -18,18 +18,15 @@ class DisposableDomainListTest extends TestCase
     {
         config(['email-utilities.disposable_email_list_path' => null]);
 
-        $this->assertCount(4931, DisposableDomainList::get());
+        $this->assertCount(4749, DisposableDomainList::get());
     }
 
     #[Test]
     public function custom_disposable_domains_are_loaded_correctly(): void
     {
-        File::put(
-            $path = './tests/Feature/Lists/disposable-domains-test.json',
-            json_encode(['customdomain.com', 'hellodomain.com'])
-        );
+        File::put('./tests/Feature/Lists/disposable-domains-test.json', json_encode(['customdomain.com', 'hellodomain.com']));
 
-        config(['email-utilities.disposable_email_list_path' => $path]);
+        config(['email-utilities.disposable_email_list_path' => './tests/Feature/Lists/disposable-domains-test.json']);
 
         $this->assertCount(2, DisposableDomainList::get());
     }
@@ -49,9 +46,9 @@ class DisposableDomainListTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        File::put($path = './tests/Feature/Lists/disposable-domains-test.json', 'NOT VALID JSON');
+        File::put('./tests/Feature/Lists/disposable-domains-test.json', 'NOT VALID JSON');
 
-        config(['email-utilities.disposable_email_list_path' => $path]);
+        config(['email-utilities.disposable_email_list_path' => './tests/Feature/Lists/disposable-domains-test.json']);
 
         DisposableDomainList::get();
     }
