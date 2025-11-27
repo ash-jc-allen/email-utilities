@@ -6,7 +6,6 @@ namespace AshAllenDesign\EmailUtilities\Tests\Feature\Rules;
 
 use AshAllenDesign\EmailUtilities\Rules\EmailDomainIsNot;
 use AshAllenDesign\EmailUtilities\Tests\Feature\TestCase;
-use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 
