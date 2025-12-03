@@ -11,8 +11,12 @@ class DisposableDomainList
 {
     public static function getListPath(): string
     {
-        return config('email-utilities.disposable_email_list_path')
-            ?: __DIR__.'/../../lists/disposable-domains.json';
+        return config('email-utilities.disposable_email_list_path') ?: static::defaultListPath();
+    }
+
+    public static function defaultListPath(): string
+    {
+        return __DIR__.'/../../lists/disposable-domains.json';
     }
 
     /**

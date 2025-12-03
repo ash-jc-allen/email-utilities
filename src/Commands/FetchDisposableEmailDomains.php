@@ -24,9 +24,9 @@ class FetchDisposableEmailDomains extends Command
 
     public function handle(): int
     {
-        // Ensure config is set so we don't overwrite the vendor list
-        if (blank(config('email-utilities.disposable_email_list_path'))) {
+        if ($this->attemptingToWriteToVendorList()) {
             $this->error("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.");
+
             return self::FAILURE;
         }
 
@@ -74,5 +74,10 @@ class FetchDisposableEmailDomains extends Command
         $this->info('Blocklist successfully fetched and stored. Domain count: '.$lineCount);
 
         return self::SUCCESS;
+    }
+
+    protected function attemptingToWriteToVendorList(): bool
+    {
+        return DisposableDomainList::getListPath() === DisposableDomainList::defaultListPath();
     }
 }
