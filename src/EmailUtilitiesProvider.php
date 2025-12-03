@@ -6,6 +6,7 @@ namespace AshAllenDesign\EmailUtilities;
 
 use AshAllenDesign\ConfigValidator\Services\ConfigValidator;
 use AshAllenDesign\ConfigValidator\Services\Rule;
+use AshAllenDesign\EmailUtilities\Commands\FetchDisposableEmailDomains;
 use AshAllenDesign\EmailUtilities\Exceptions\ValidationException;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,6 +35,8 @@ class EmailUtilitiesProvider extends ServiceProvider
         ], groups: ['email-utilities-lists']);
 
         $this->validateConfig();
+
+        $this->commands(FetchDisposableEmailDomains::class);
     }
 
     private function validateConfig(): void

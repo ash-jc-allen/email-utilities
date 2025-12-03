@@ -14,17 +14,26 @@ class DisposableDomainList
      */
     protected static ?array $patternsCache;
 
+    public static function getListPath(): string
+    {
+        /** @var string $path */
+        $path =  config('email-utilities.disposable_email_list_path') ?: static::defaultListPath();
+
+        return $path;
+    }
+
+    public static function defaultListPath(): string
+    {
+        return __DIR__.'/../../lists/disposable-domains.json';
+    }
+
     /**
      * @return list<string>
      * @throws FileNotFoundException
      */
     public static function get(): array
     {
-        /** @var string $listLocation */
-        $listLocation = config('email-utilities.disposable_email_list_path')
-            ?: __DIR__.'/../../lists/disposable-domains.json';
-
-        return static::$patternsCache ??= array_values(File::json($listLocation));
+        return static::$patternsCache ??= array_values(File::json(self::getListPath()));
     }
 
     public static function flushPatternsCache(): void

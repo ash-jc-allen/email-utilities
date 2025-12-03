@@ -25,6 +25,8 @@
     * [Validation Rules](#validation-rules)
       + [`EmailDomainIs` Rule](#emaildomainis-rule)
       + [`EmailDomainIsNot` Rule](#emaildomainisnot-rule)
+    * [Commands](#commands)
+      + [Updating the Disposable Email Domains List](#updating-the-disposable-email-domains-list)
 - [Config](#config)
     * [Disposable Email Domains List](#disposable-email-domains-list)
     * [Role Accounts List](#role-accounts-list)
@@ -97,14 +99,18 @@ use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
 $disposableEmailDomains = DisposableEmailDomains::get();
 
 // [
-    // '0-mail.com',
-    // '027168.com',
-    // '062e.com',
-    // ...
+//     '0-mail.com',
+//     '027168.com',
+//     '062e.com',
+//     ...
 // ]
 ```
 
 The list of disposable email address providers is sourced from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains). It's worth remembering that new domains are being used all the time, so it's possible that some disposable email addresses may not be detected. So please use this functionality with that in mind.
+
+> [!NOTE]
+> If you wish to keep the list of disposable email domains up-to-date, please check the [Usage > Commands > Updating the Disposable Email Domains List
+](#updating-the-disposable-email-domains-list) section below. The package provides a handy `FetchDisposableEmailDomains` Artisan command which you can schedule.
 
 ### Role-based Email Addresses
 
@@ -225,6 +231,34 @@ $request->validate([
 ]);
 ```
 
+## Commands
+
+### Updating the Disposable Email Domains List
+
+As mentioned above, the package comes with a built-in list of disposable email address domains. However, new disposable email address providers are being created all the time, so it's important to keep this list up-to-date. Generally, there are three ways you can do this:
+
+- Manually maintain a custom list of disposable email address domains and configure the package to use this list instead.
+- Relying on the built-in list and periodically updating the package via Composer. Although, this may not always provide the most up-to-date list.
+- Using the provided `FetchDisposableEmailDomains` Artisan command to automatically fetch and store the latest list of disposable email address domains.
+
+You can run the `FetchDisposableEmailDomains` command like so:
+
+```bash
+php artisan email-utilities:fetch-disposable-domains
+```
+
+This command will fetch the latest list of disposable email address domains from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) and store the list in the location defined by the `disposable_email_list_path` configuration option.
+
+Please note, you must set the `dispoable_email_list_path` configuration option for this to work. If this option is left as `null` (the default value), the list will not be fetched.
+
+You may want to schedule this command to run on a regular basis to ensure that your list of disposable email address domains is always up-to-date. You can do this in your `routes/console.php` file like so:
+
+```php
+Schedule::command(\AshAllenDesign\EmailUtilities\Commands\FetchDisposableEmailDomains::class)
+  ->daily()
+  ->emailOutputOnFailure('myapp@example.com');
+```
+
 ## Config
 
 The package provides several options that can be configured via the published configuration file located at `config/email-utilities.php`.
@@ -236,12 +270,12 @@ By default, the package uses a built-in list of disposable email address domains
 However, you can maintain your own list of disposable domains by setting the `disposable_email_list_path` configuration option like so:
 
 ```php
-'disposable_email_list_path' => './storage/app/disposable_email_domains.json',
+'disposable_email_list_path' => storage_path('app/disposable-domains.json'),
 ```
 
 You can also publish the package's built-in list to your application by running the following command:
 
-```text
+```bash
 php artisan vendor:publish --tag=email-utilities-lists
 ```
 
