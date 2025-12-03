@@ -13,6 +13,13 @@ use TypeError;
 
 class DisposableDomainListTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        DisposableDomainList::flushCachedList();
+    }
+
     #[Test]
     public function default_disposable_domains_are_loaded_correctly(): void
     {
@@ -53,9 +60,37 @@ class DisposableDomainListTest extends TestCase
         DisposableDomainList::get();
     }
 
+    #[Test]
+    public function disposable_patterns_are_loaded_only_once_per_request(): void
+    {
+        // Create disposable domain file for this test
+        File::put(
+            $path = './tests/Feature/Lists/disposable-domains-test.json',
+            json_encode(['customdomain.com', 'hellodomain.com'], JSON_PRETTY_PRINT)
+        );
+
+        config(['email-utilities.disposable_email_list_path' => $path]);
+
+        // Below logic is much simpler than mocking DisposableDomainList::get() ...
+
+        // 1st call → should read the JSON file and patternsCache
+        DisposableDomainList::get();
+
+        // Delete the JSON file — if the rule tries to reload it, it will fail
+        $this->assertTrue(File::delete($path));
+
+        // 2nd and 3rd calls MUST succeed → they must use the cached patterns
+        DisposableDomainList::get();
+        DisposableDomainList::get();
+
+        // If we reached here, caching worked
+        $this->assertTrue(true);
+    }
+
     protected function tearDown(): void
     {
         File::delete('./tests/Feature/Lists/disposable-domains-test.json');
+        DisposableDomainList::flushCachedList();
 
         parent::tearDown();
     }

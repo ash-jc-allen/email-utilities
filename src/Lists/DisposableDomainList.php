@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\File;
 
 class DisposableDomainList
 {
+    /**
+     * Holds the contents of the disposable domains list file. This means we only
+     * read and parse the file once instead of on every call to get the list.
+     *
+     * @var list<string>|null
+     */
+    protected static ?array $cachedList;
+
     public static function getListPath(): string
     {
         /** @var string $path */
@@ -28,6 +36,11 @@ class DisposableDomainList
      */
     public static function get(): array
     {
-        return array_values(File::json(self::getListPath()));
+        return static::$cachedList ??= array_values(File::json(self::getListPath()));
+    }
+
+    public static function flushCachedList(): void
+    {
+        self::$cachedList = null;
     }
 }
