@@ -19,7 +19,7 @@ class FetchDisposableEmailDomainsTest extends TestCase
         config(['email-utilities.disposable_email_list_path' => null]);
 
         $this->artisan(FetchDisposableEmailDomains::class)
-            ->expectsOutput("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.")
+            ->expectsOutputToContain("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.")
             ->assertExitCode(Command::FAILURE);
     }
 
@@ -40,7 +40,12 @@ class FetchDisposableEmailDomainsTest extends TestCase
         ]);
 
         $this->artisan(FetchDisposableEmailDomains::class)
-            ->expectsOutput('Blocklist successfully fetched and stored. Domain count: 1200')
+            ->expectsOutputToContain('Blocklist successfully fetched and stored.')
+            ->expectsOutputToContain('Stored at: ')
+            ->expectsOutputToContain('Previous domain count:')
+            ->expectsOutputToContain('New domain count:')
+            ->expectsOutputToContain('Added domains:')
+            ->expectsOutputToContain('Removed domains:')
             ->assertExitCode(Command::SUCCESS);
 
         // Assert file was written and contains correct contents

@@ -6,11 +6,13 @@ namespace AshAllenDesign\EmailUtilities\Commands;
 
 use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'email-utilities:fetch-disposable-domains')]
 class FetchDisposableEmailDomains extends Command
@@ -28,7 +30,7 @@ class FetchDisposableEmailDomains extends Command
     public function handle(): int
     {
         if ($this->attemptingToWriteToVendorList()) {
-            $this->error("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.");
+            $this->components->error("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.");
 
             return self::FAILURE;
         }
@@ -37,7 +39,7 @@ class FetchDisposableEmailDomains extends Command
         $response = Http::get(self::BLOCKLIST_URL);
 
         if (! $response->successful()) {
-            $this->error('Failed to fetch the blocklist. Status code: ' . $response->status());
+            $this->components->error('Failed to fetch the blocklist. Status code: ' . $response->status());
             return self::FAILURE;
         }
 
@@ -49,12 +51,14 @@ class FetchDisposableEmailDomains extends Command
 
         $domains = $this->readDomainsFromLines($lines);
 
+        $existingList = $this->getExistingList();
+
         File::put(
             DisposableDomainList::getListPath(),
             json_encode($domains, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
 
-        $this->info('Blocklist successfully fetched and stored. Domain count: '.count($domains));
+        $this->summary($existingList, $domains);
 
         return self::SUCCESS;
     }
@@ -105,11 +109,62 @@ class FetchDisposableEmailDomains extends Command
         $lineCount = count(array_filter($lines));
 
         if ($lineCount < 1000) {
-            $this->error('The blocklist contains fewer than 1000 lines. Aborting.');
+            $this->components->error('The blocklist contains fewer than 1000 lines. Aborting.');
 
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @param list<string> $existingList
+     * @param list<string> $newList
+     */
+    protected function summary(array $existingList, array $newList): void
+    {
+        $this->components->success('Blocklist successfully fetched and stored.');
+
+        $this->components->twoColumnDetail('Stored at: ', DisposableDomainList::getListPath());
+
+        $this->newLine();
+
+        $this->components->twoColumnDetail('Previous domain count: ', (string) count($existingList));
+        $this->components->twoColumnDetail('New domain count: ', (string) count($newList));
+
+        $this->newLine();
+
+        // Find the domains that are present in the new list but weren't in the existing list
+        $addedDomains = array_diff($newList, $existingList);
+
+        // Find the domains that are present in the existing list but aren't in the new list
+        $removedDomains = array_diff($existingList, $newList);
+
+        $this->components->twoColumnDetail('Added domains: ', (string) count($addedDomains));
+
+        if (count($addedDomains)) {
+            $this->components->bulletList($addedDomains, verbosity: OutputInterface::VERBOSITY_VERBOSE);
+        }
+
+        $this->components->twoColumnDetail('Removed domains: ', (string) count($removedDomains));
+
+        if (count($removedDomains)) {
+            $this->components->bulletList($removedDomains, verbosity: OutputInterface::VERBOSITY_VERBOSE);
+        }
+    }
+
+    /**
+     * Read the existing list before we overwrite it. We are doing this so we can build
+     * a summary of what has changed in the list.
+     *
+     * @return list<string>
+     */
+    protected function getExistingList(): array
+    {
+        try {
+            return DisposableDomainList::get();
+        } catch (FileNotFoundException) {
+            return [];
+        }
     }
 }
