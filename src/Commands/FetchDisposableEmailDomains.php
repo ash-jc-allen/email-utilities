@@ -58,7 +58,7 @@ class FetchDisposableEmailDomains extends Command
             json_encode($domains, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
 
-        $this->summary($existingList, $domains);
+        $this->summary(existingList: $existingList, newList: $domains);
 
         return self::SUCCESS;
     }
@@ -118,8 +118,8 @@ class FetchDisposableEmailDomains extends Command
     }
 
     /**
-     * @param list<string> $existingList
-     * @param list<string> $newList
+     * @param string[] $existingList
+     * @param string[] $newList
      */
     protected function summary(array $existingList, array $newList): void
     {
