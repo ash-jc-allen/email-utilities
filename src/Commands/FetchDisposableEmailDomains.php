@@ -6,10 +6,10 @@ namespace AshAllenDesign\EmailUtilities\Commands;
 
 use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Number;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'email-utilities:fetch-disposable-domains')]
@@ -21,6 +21,10 @@ class FetchDisposableEmailDomains extends Command
 
     protected $description = 'Fetch and store the blocklist of disposable email domains.';
 
+    /**
+     * @throws ConnectionException
+     * @throws \JsonException
+     */
     public function handle(): int
     {
         if ($this->attemptingToWriteToVendorList()) {
@@ -29,7 +33,7 @@ class FetchDisposableEmailDomains extends Command
             return self::FAILURE;
         }
 
-        $response = Http::get(self::BLOCKLIST_URL);
+        $response = $this->makeRequest();
 
         if (! $response->successful()) {
             $this->error('Failed to fetch the blocklist. Status code: ' . $response->status());
@@ -106,5 +110,13 @@ class FetchDisposableEmailDomains extends Command
         }
 
         return true;
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    protected function makeRequest(): Response
+    {
+        return Http::get(self::BLOCKLIST_URL);
     }
 }
