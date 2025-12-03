@@ -71,20 +71,25 @@ class DisposableDomainListTest extends TestCase
 
         config(['email-utilities.disposable_email_list_path' => $path]);
 
-        // Below logic is much simpler than mocking DisposableDomainList::get() ...
-
         // 1st call → should read the JSON file and patternsCache
-        DisposableDomainList::get();
+        $this->assertSame(
+            ['customdomain.com', 'hellodomain.com'],
+            DisposableDomainList::get()
+        );
 
         // Delete the JSON file — if the rule tries to reload it, it will fail
         $this->assertTrue(File::delete($path));
 
         // 2nd and 3rd calls MUST succeed → they must use the cached patterns
-        DisposableDomainList::get();
-        DisposableDomainList::get();
+        $this->assertSame(
+            ['customdomain.com', 'hellodomain.com'],
+            DisposableDomainList::get()
+        );
 
-        // If we reached here, caching worked
-        $this->assertTrue(true);
+        $this->assertSame(
+            ['customdomain.com', 'hellodomain.com'],
+            DisposableDomainList::get()
+        );
     }
 
     protected function tearDown(): void
