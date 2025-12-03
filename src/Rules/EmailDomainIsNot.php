@@ -35,6 +35,6 @@ class EmailDomainIsNot implements ValidationRule
 
     public static function disposable(): self
     {
-        return new self(DisposableDomainList::get());
+        return new self(patterns: DisposableDomainList::get());
     }
 }
