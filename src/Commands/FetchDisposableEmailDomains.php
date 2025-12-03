@@ -29,9 +29,6 @@ class FetchDisposableEmailDomains extends Command
             return self::FAILURE;
         }
 
-        // Absolute file path (string), e.g. storage/app/disposable-domains.json
-        $listPath = DisposableDomainList::getListPath();
-
         $response = Http::get(self::BLOCKLIST_URL);
 
         if (! $response->successful()) {
@@ -48,7 +45,7 @@ class FetchDisposableEmailDomains extends Command
         $domains = $this->readDomainsFromLines($lines);
 
         File::put(
-            $listPath,
+            DisposableDomainList::getListPath(),
             json_encode($domains, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
 
