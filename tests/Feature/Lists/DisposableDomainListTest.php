@@ -16,6 +16,7 @@ class DisposableDomainListTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         DisposableDomainList::flushPatternsCache();
     }
 
@@ -59,13 +60,6 @@ class DisposableDomainListTest extends TestCase
         DisposableDomainList::get();
     }
 
-    protected function tearDown(): void
-    {
-        File::delete('./tests/Feature/Lists/disposable-domains-test.json');
-
-        parent::tearDown();
-    }
-
     #[Test]
     public function disposable_patterns_are_loaded_only_once_per_request(): void
     {
@@ -91,5 +85,13 @@ class DisposableDomainListTest extends TestCase
 
         // If we reached here, caching worked
         $this->assertTrue(true);
+    }
+
+    protected function tearDown(): void
+    {
+        File::delete('./tests/Feature/Lists/disposable-domains-test.json');
+        DisposableDomainList::flushPatternsCache();
+
+        parent::tearDown();
     }
 }
