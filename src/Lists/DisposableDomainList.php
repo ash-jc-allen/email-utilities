@@ -11,7 +11,10 @@ class DisposableDomainList
 {
     public static function getListPath(): string
     {
-        return config('email-utilities.disposable_email_list_path') ?: static::defaultListPath();
+        /** @var string $path */
+        $path =  config('email-utilities.disposable_email_list_path') ?: static::defaultListPath();
+
+        return $path;
     }
 
     public static function defaultListPath(): string
@@ -25,6 +28,6 @@ class DisposableDomainList
      */
     public static function get(): array
     {
-        return File::json(self::getListPath());
+        return array_values(File::json(self::getListPath()));
     }
 }
