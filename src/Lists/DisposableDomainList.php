@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\File;
 class DisposableDomainList
 {
     /**
-     * Cache the patterns, so we don't load/parse the disposable domains file multiple times per request.
+     * Holds the contents of the disposable domains list file. This means we only
+     * read and parse the file once instead of on every call to get the list.
+     *
+     * @var list<string>|null
      */
     protected static ?array $patternsCache;
 
