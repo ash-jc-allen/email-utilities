@@ -33,7 +33,8 @@ class FetchDisposableEmailDomains extends Command
             return self::FAILURE;
         }
 
-        $response = $this->makeRequest();
+        /** @var Response $response */
+        $response = Http::get(self::BLOCKLIST_URL);
 
         if (! $response->successful()) {
             $this->error('Failed to fetch the blocklist. Status code: ' . $response->status());
@@ -110,13 +111,5 @@ class FetchDisposableEmailDomains extends Command
         }
 
         return true;
-    }
-
-    /**
-     * @throws ConnectionException
-     */
-    protected function makeRequest(): Response
-    {
-        return Http::get(self::BLOCKLIST_URL);
     }
 }
