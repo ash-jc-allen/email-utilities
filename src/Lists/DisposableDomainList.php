@@ -15,7 +15,7 @@ class DisposableDomainList
      *
      * @var list<string>|null
      */
-    protected static ?array $patternsCache;
+    protected static ?array $cachedList;
 
     public static function getListPath(): string
     {
@@ -36,11 +36,11 @@ class DisposableDomainList
      */
     public static function get(): array
     {
-        return static::$patternsCache ??= array_values(File::json(self::getListPath()));
+        return static::$cachedList ??= array_values(File::json(self::getListPath()));
     }
 
-    public static function flushPatternsCache(): void
+    public static function flushCachedList(): void
     {
-        self::$patternsCache = null;
+        self::$cachedList = null;
     }
 }

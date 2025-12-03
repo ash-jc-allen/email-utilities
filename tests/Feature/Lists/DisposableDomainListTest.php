@@ -17,7 +17,7 @@ class DisposableDomainListTest extends TestCase
     {
         parent::setUp();
 
-        DisposableDomainList::flushPatternsCache();
+        DisposableDomainList::flushCachedList();
     }
 
     #[Test]
@@ -90,7 +90,7 @@ class DisposableDomainListTest extends TestCase
     protected function tearDown(): void
     {
         File::delete('./tests/Feature/Lists/disposable-domains-test.json');
-        DisposableDomainList::flushPatternsCache();
+        DisposableDomainList::flushCachedList();
 
         parent::tearDown();
     }
