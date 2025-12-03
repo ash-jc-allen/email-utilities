@@ -67,8 +67,8 @@ class FetchDisposableEmailDomains extends Command
      * We'll trim each line, filter out any empty lines, and validate the
      * domains.
      *
-     * @param non-empty-list<string> $lines
-     * @return non-empty-list<string>
+     * @param list<string> $lines
+     * @return string[]
      */
     protected function readDomainsFromLines(array $lines): array
     {
@@ -83,13 +83,15 @@ class FetchDisposableEmailDomains extends Command
     }
 
     /**
-     * Split the response body into an array of lines.
+     * Split the response body into an array of lines. If we fail to split the
+     * lines, we'll just return an empty array and let the "linesAreValid"
+     * method handle the error.
      *
      * @return list<string>
      */
     protected function readLinesFromResponse(string $responseBody): array
     {
-        return preg_split('/\R/', $responseBody);
+        return preg_split('/\R/', $responseBody) ?: [];
     }
 
     /**
