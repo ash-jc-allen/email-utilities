@@ -39,22 +39,20 @@ class FetchDisposableEmailDomains extends Command
             return self::FAILURE;
         }
 
-        $body = trim($response->body());
+        $lines = $this->readLinesFromResponse(trim($response->body()));
 
-        // Count lines before writing the file
-        $lines = preg_split('/\R/', $body); // removes trailing CR/LF
-        $lineCount = count(array_filter($lines));
-        if ($lineCount < 1000) {
-            $this->error('The blocklist contains fewer than 1000 lines. Aborting.');
+        if (!$this->linesAreValid($lines)) {
             return self::FAILURE;
         }
 
+        $domains = $this->readDomainsFromLines($lines);
+
         File::put(
             $listPath,
-            json_encode($this->readDomainsFromLines($lines), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
+            json_encode($domains, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
 
-        $this->info('Blocklist successfully fetched and stored. Domain count: '.$lineCount);
+        $this->info('Blocklist successfully fetched and stored. Domain count: '.count($domains));
 
         return self::SUCCESS;
     }
@@ -82,5 +80,32 @@ class FetchDisposableEmailDomains extends Command
             })
             ->values()
             ->all();
+    }
+
+    /**
+     * Split the response body into an array of lines.
+     *
+     * @return list<string>
+     */
+    protected function readLinesFromResponse(string $responseBody): array
+    {
+        return preg_split('/\R/', $responseBody);
+    }
+
+    /**
+     * @param string[] $lines
+     * @return bool
+     */
+    protected function linesAreValid(array $lines): bool
+    {
+        $lineCount = count(array_filter($lines));
+
+        if ($lineCount < 1000) {
+            $this->error('The blocklist contains fewer than 1000 lines. Aborting.');
+
+            return false;
+        }
+
+        return true;
     }
 }
