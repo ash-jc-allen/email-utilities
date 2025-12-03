@@ -25,6 +25,8 @@
     * [Validation Rules](#validation-rules)
       + [`EmailDomainIs` Rule](#emaildomainis-rule)
       + [`EmailDomainIsNot` Rule](#emaildomainisnot-rule)
+    * [Commands](#commands)
+      + [Updating the Disposable Email Domains List](#updating-the-disposable-email-domains-list)
 - [Config](#config)
     * [Disposable Email Domains List](#disposable-email-domains-list)
     * [Role Accounts List](#role-accounts-list)
@@ -107,7 +109,8 @@ $disposableEmailDomains = DisposableEmailDomains::get();
 The list of disposable email address providers is sourced from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains). It's worth remembering that new domains are being used all the time, so it's possible that some disposable email addresses may not be detected. So please use this functionality with that in mind.
 
 > [!NOTE]
-> If you wish to keep the list of disposable email domains up-to-date, please check the [Config > Disposable Email Domains List](#disposable-email-domains-list) section below. We're providing a nice `FetchDisposableEmailDomains` Artisan command which you can schedule.
+> If you wish to keep the list of disposable email domains up-to-date, please check the [Usage > Commands > Updating the Disposable Email Domains List
+](#updating-the-disposable-email-domains-list) section below. The package provides a handy `FetchDisposableEmailDomains` Artisan command which you can schedule.
 
 ### Role-based Email Addresses
 
@@ -228,6 +231,34 @@ $request->validate([
 ]);
 ```
 
+## Commands
+
+### Updating the Disposable Email Domains List
+
+As mentioned above, the package comes with a built-in list of disposable email address domains. However, new disposable email address providers are being created all the time, so it's important to keep this list up-to-date. Generally, there are three ways you can do this:
+
+- Manually maintain a custom list of disposable email address domains and configure the package to use this list instead.
+- Relying on the built-in list and periodically updating the package via Composer. Although, this may not always provide the most up-to-date list.
+- Using the provided `FetchDisposableEmailDomains` Artisan command to automatically fetch and store the latest list of disposable email address domains.
+
+You can run the `FetchDisposableEmailDomains` command like so:
+
+```bash
+php artisan email-utilities:fetch-disposable-domains
+```
+
+This command will fetch the latest list of disposable email address domains from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) and store the list in the location defined by the `disposable_email_list_path` configuration option.
+
+Please note, you must set the `dispoable_email_list_path` configuration option for this to work. If this option is left as `null` (the default value), the list will not be fetched.
+
+You may want to schedule this command to run on a regular basis to ensure that your list of disposable email address domains is always up-to-date. You can do this in your `routes/console.php` file like so:
+
+```php
+Schedule::command(\AshAllenDesign\EmailUtilities\Commands\FetchDisposableEmailDomains::class)
+  ->daily()
+  ->emailOutputOnFailure('myapp@example.com');
+```
+
 ## Config
 
 The package provides several options that can be configured via the published configuration file located at `config/email-utilities.php`.
@@ -249,20 +280,6 @@ php artisan vendor:publish --tag=email-utilities-lists
 ```
 
 This will create a `disposable-domains.json` file in your application's root directory. You can then modify this file as needed and update the `disposable_email_list_path` configuration option to point to this file. Running this command will also publish a `role-accounts.json` file that you can use to maintain your own list of role-based email address prefixes.
-
-Once you have configured `disposable_email_list_path`, we recommend to keep the list updated via our Artisan command:
-
-```bash
-php artisan email-utilities:fetch-disposable-domains
-```
-
-You may schedule this in your `routes/console.php` to run on a daily basis:
-
-```php
-Schedule::command(\AshAllenDesign\EmailUtilities\Commands\FetchDisposableEmailDomains::class)
-  ->daily()
-  ->emailOutputOnFailure('myapp@example.com');
-```
 
 ### Role Accounts List
 
