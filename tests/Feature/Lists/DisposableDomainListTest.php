@@ -25,7 +25,7 @@ class DisposableDomainListTest extends TestCase
     {
         config(['email-utilities.disposable_email_list_path' => null]);
 
-        $this->assertCount(4749, DisposableDomainList::get());
+        $this->assertCount(4932, DisposableDomainList::get());
     }
 
     #[Test]
