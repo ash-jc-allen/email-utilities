@@ -15,8 +15,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 #[AsCommand(name: 'email-utilities:fetch-disposable-domains')]
 class FetchDisposableEmailDomains extends Command
 {
-    public const string BLOCKLIST_URL =
-        'https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/master/disposable_email_blocklist.conf';
+    public const string BLOCKLIST_URL = 'https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/master/disposable_email_blocklist.conf';
 
     protected $signature = 'email-utilities:fetch-disposable-domains';
 
@@ -50,26 +49,10 @@ class FetchDisposableEmailDomains extends Command
             return self::FAILURE;
         }
 
-        // Sanitize and store the fetched contents
-        $isValidDomain = fn (string $domain): bool =>
-            filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
-        $domains = collect($lines)
-            ->map(fn (string $line) => trim($line))
-            ->filter()               // removes blank lines
-            ->filter($isValidDomain) // keeps only valid domains (including idn ascii 'xn--' format)
-            ->values()
-            ->all();
-
         File::put(
             $listPath,
-            json_encode($domains, JSON_PRETTY_PRINT)
+            json_encode($this->readDomainsFromLines($lines), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
-
-        Log::info("Disposable domain blocklist updated: $listPath", [
-            'domain_count' => $lineCount,
-            'file_size'    => $fileSize = File::size($listPath),
-            'file_size_h'  => Number::fileSize($fileSize),
-        ]);
 
         $this->info('Blocklist successfully fetched and stored. Domain count: '.$lineCount);
 
@@ -79,5 +62,25 @@ class FetchDisposableEmailDomains extends Command
     protected function attemptingToWriteToVendorList(): bool
     {
         return DisposableDomainList::getListPath() === DisposableDomainList::defaultListPath();
+    }
+
+    /**
+     * Read the domains from the given lines and then return them for storing.
+     * We'll trim each line, filter out any empty lines, and validate the
+     * domains.
+     *
+     * @param non-empty-list<string> $lines
+     * @return non-empty-list<string>
+     */
+    protected function readDomainsFromLines(array $lines): array
+    {
+        return collect($lines)
+            ->map(fn (string $line): string => trim($line))
+            ->filter()
+            ->filter(function (string $domain): bool {
+                return filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
+            })
+            ->values()
+            ->all();
     }
 }
