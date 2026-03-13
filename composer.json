@@ -18,11 +18,11 @@
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/validation": "^11.0|^12.0",
+    "illuminate/validation": "^11.0|^12.0|^13.0",
     "ashallendesign/laravel-config-validator": "^2.9"
   },
   "require-dev": {
-    "orchestra/testbench": "^9.0|^10.0",
+    "orchestra/testbench": "^9.0|^10.0|^11.0",
     "phpunit/phpunit": "^11.0 || ^12.0",
     "larastan/larastan": "^3.0",
     "friendsofphp/php-cs-fixer": "^3.88"
