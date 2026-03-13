@@ -1,5 +1,10 @@
 # Changelog
 
+**v1.2.0 (released 2026-03-13):**
+
+- Added support for Laravel 13. ([#22](https://github.com/ash-jc-allen/email-utilities/pull/22))
+- Updated the disposable domains list. ([#23](https://github.com/ash-jc-allen/email-utilities/pull/23))
+
 **v1.1.0 (released 2025-12-03):**
 
 - Added an `email-utilities:fetch-disposable-domains` Artisan command to fetch the latest disposable email domains list. ([#12](https://github.com/ash-jc-allen/email-utilities/pull/12), [#20](https://github.com/ash-jc-allen/email-utilities/pull/20))
