@@ -7,6 +7,7 @@
 <a href="https://packagist.org/packages/ashallendesign/email-utilities"><img src="https://img.shields.io/packagist/dt/ashallendesign/email-utilities.svg?style=flat-square" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/ashallendesign/email-utilities"><img src="https://img.shields.io/packagist/php-v/ashallendesign/email-utilities?style=flat-square" alt="PHP from Packagist"></a>
 <a href="https://github.com/ash-jc-allen/email-utilities/blob/master/LICENSE"><img src="https://img.shields.io/github/license/ash-jc-allen/email-utilities?style=flat-square" alt="GitHub license"></a>
+<a href="https://github.com/ash-jc-allen/email-utilities/blob/master/composer.json"><img src="https://badge.laravel.cloud/badge/ashallendesign/email-utilities?style=flat" alt="Laravel Compatibility"></a>
 </p>
 
 ## Table of Contents
