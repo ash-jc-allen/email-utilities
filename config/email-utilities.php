@@ -64,6 +64,12 @@ return [
 
         'cache' => [
             // The cache store to use. `null` uses your default store.
+            //
+            // Note: some cache backends cap the size of a single item, and the
+            // disposable domains list is a single large value (roughly 220 KB
+            // serialized as of 2026, and growing). DynamoDB caps items at
+            // 400 KB and Memcached at 1 MB by default; Redis and the database
+            // and file stores are effectively unlimited for this purpose.
             'store' => null,
             'prefix' => 'email-utilities',
             // Lifetime in seconds. `null` stores the lists forever.

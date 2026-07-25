@@ -335,6 +335,9 @@ The available drivers are:
     ],
     ```
 
+    > [!WARNING]
+    > The disposable domains list is stored as a single cache item, and some backends cap item sizes. The upstream list currently serializes to roughly 220 KB — comfortably within Redis's limits, but over half of DynamoDB's 400 KB item cap and about a fifth of Memcached's default 1 MB cap. If your cache store is DynamoDB (e.g. Laravel Vapor's default) and the upstream list keeps growing, the fetch command will begin to fail once the cap is exceeded — consider the `database` or `disk` driver instead. If the command does fail, the previously stored list keeps being served.
+
 - `database` — A database table. Publish and run the migration first:
 
     ```bash
