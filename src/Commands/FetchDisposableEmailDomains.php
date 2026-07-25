@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace AshAllenDesign\EmailUtilities\Commands;
 
+use AshAllenDesign\EmailUtilities\Contracts\ListStore;
+use AshAllenDesign\EmailUtilities\Exceptions\ListStorageException;
 use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
+use AshAllenDesign\EmailUtilities\Lists\ListType;
+use AshAllenDesign\EmailUtilities\ListStoreManager;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,10 +30,14 @@ class FetchDisposableEmailDomains extends Command
      * @throws ConnectionException
      * @throws \JsonException
      */
-    public function handle(): int
+    public function handle(ListStoreManager $listStores): int
     {
-        if ($this->attemptingToWriteToVendorList()) {
-            $this->components->error("The configuration 'email-utilities.disposable_email_list_path' is not set. Please set it to a valid file path.");
+        $store = $listStores->store();
+
+        try {
+            $store->ensureCanStore(ListType::DisposableDomains);
+        } catch (ListStorageException $exception) {
+            $this->components->error($exception->getMessage());
 
             return self::FAILURE;
         }
@@ -51,21 +58,15 @@ class FetchDisposableEmailDomains extends Command
 
         $domains = $this->readDomainsFromLines($lines);
 
-        $existingList = $this->getExistingList();
+        $existingList = $this->getExistingList($store);
 
-        File::put(
-            DisposableDomainList::getListPath(),
-            json_encode($domains, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
-        );
+        $store->put(ListType::DisposableDomains, $domains);
 
-        $this->summary(existingList: $existingList, newList: $domains);
+        DisposableDomainList::flushCachedList();
+
+        $this->summary(location: $store->location(ListType::DisposableDomains), existingList: $existingList, newList: $domains);
 
         return self::SUCCESS;
-    }
-
-    protected function attemptingToWriteToVendorList(): bool
-    {
-        return DisposableDomainList::getListPath() === DisposableDomainList::defaultListPath();
     }
 
     /**
@@ -74,18 +75,17 @@ class FetchDisposableEmailDomains extends Command
      * domains.
      *
      * @param list<string> $lines
-     * @return string[]
+     * @return list<string>
      */
     protected function readDomainsFromLines(array $lines): array
     {
-        return collect($lines)
+        return array_values(collect($lines)
             ->map(fn (string $line): string => trim($line))
             ->filter()
             ->filter(function (string $domain): bool {
                 return filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
             })
-            ->values()
-            ->all();
+            ->all());
     }
 
     /**
@@ -121,11 +121,11 @@ class FetchDisposableEmailDomains extends Command
      * @param string[] $existingList
      * @param string[] $newList
      */
-    protected function summary(array $existingList, array $newList): void
+    protected function summary(string $location, array $existingList, array $newList): void
     {
         $this->components->success('Blocklist successfully fetched and stored.');
 
-        $this->components->twoColumnDetail('Stored at: ', DisposableDomainList::getListPath());
+        $this->components->twoColumnDetail('Stored at: ', $location);
 
         $this->newLine();
 
@@ -159,10 +159,10 @@ class FetchDisposableEmailDomains extends Command
      *
      * @return list<string>
      */
-    protected function getExistingList(): array
+    protected function getExistingList(ListStore $store): array
     {
         try {
-            return DisposableDomainList::get();
+            return $store->get(ListType::DisposableDomains) ?? [];
         } catch (FileNotFoundException) {
             return [];
         }

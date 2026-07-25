@@ -7,7 +7,9 @@ namespace AshAllenDesign\EmailUtilities;
 use AshAllenDesign\ConfigValidator\Services\ConfigValidator;
 use AshAllenDesign\ConfigValidator\Services\Rule;
 use AshAllenDesign\EmailUtilities\Commands\FetchDisposableEmailDomains;
+use AshAllenDesign\EmailUtilities\Contracts\ListStore;
 use AshAllenDesign\EmailUtilities\Exceptions\ValidationException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class EmailUtilitiesProvider extends ServiceProvider
@@ -18,6 +20,13 @@ class EmailUtilitiesProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(path: __DIR__.'/../config/email-utilities.php', key: 'email-utilities');
+
+        $this->app->singleton(ListStoreManager::class);
+
+        $this->app->bind(
+            ListStore::class,
+            static fn (Application $app): ListStore => $app->make(ListStoreManager::class)->store(),
+        );
     }
 
     /**
@@ -33,6 +42,10 @@ class EmailUtilitiesProvider extends ServiceProvider
             __DIR__.'/../lists/disposable-domains.json' => base_path('disposable-domains.json'),
             __DIR__.'/../lists/role-accounts.json' => base_path('role-accounts.json'),
         ], groups: ['email-utilities-lists']);
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/create_email_utilities_lists_table.php.stub' => database_path('migrations/'.date('Y_m_d_His').'_create_email_utilities_lists_table.php'),
+        ], groups: ['email-utilities-migrations']);
 
         $this->validateConfig();
 

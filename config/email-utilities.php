@@ -32,6 +32,54 @@ return [
 
     /*
     |-----------------------------------------------------------------------------------
+    | List Storage
+    |-----------------------------------------------------------------------------------
+    |
+    | Configure where the lists live when they are stored (for example, after
+    | running the "email-utilities:fetch-disposable-domains" command). When a
+    | store does not hold a list, the package's built-in copy is used.
+    |
+    | Supported drivers: "file", "disk", "cache", "database".
+    |
+    | file     - Local file paths. Uses the "disposable_email_list_path" and
+    |            "role_accounts_list_path" options above, exactly as previous
+    |            versions of this package did.
+    | disk     - A Laravel filesystem disk (e.g. "s3"). Useful when the local
+    |            filesystem is ephemeral, such as on serverless platforms.
+    | cache    - A Laravel cache store.
+    | database - A database table. Publish the migration with:
+    |            php artisan vendor:publish --tag=email-utilities-migrations
+    |
+    */
+    'storage' => [
+
+        'driver' => 'file',
+
+        'disk' => [
+            // The filesystem disk to use. `null` uses your default disk.
+            'disk' => null,
+            'disposable_email_list_path' => 'email-utilities/disposable-domains.json',
+            'role_accounts_list_path' => 'email-utilities/role-accounts.json',
+        ],
+
+        'cache' => [
+            // The cache store to use. `null` uses your default store.
+            'store' => null,
+            'prefix' => 'email-utilities',
+            // Lifetime in seconds. `null` stores the lists forever.
+            'ttl' => null,
+        ],
+
+        'database' => [
+            // The database connection to use. `null` uses your default connection.
+            'connection' => null,
+            'table' => 'email_utilities_lists',
+        ],
+
+    ],
+
+    /*
+    |-----------------------------------------------------------------------------------
     | Validate Config
     |-----------------------------------------------------------------------------------
     |
