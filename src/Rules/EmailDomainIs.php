@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AshAllenDesign\EmailUtilities\Rules;
 
 use AshAllenDesign\EmailUtilities\Email;
+use AshAllenDesign\EmailUtilities\Exceptions\InvalidEmailAddressException;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
@@ -22,12 +23,25 @@ class EmailDomainIs implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param string $value
      * @param Closure(string, ?string=): PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ((new Email($value))->domainIsNot($this->patterns)) {
+        if (! is_string($value)) {
+            $fail('The :attribute must be a valid email address.');
+
+            return;
+        }
+
+        try {
+            $email = new Email($value);
+        } catch (InvalidEmailAddressException) {
+            $fail('The :attribute must be a valid email address.');
+
+            return;
+        }
+
+        if ($email->domainIsNot($this->patterns)) {
             $fail('The :attribute domain is not allowed.');
         }
     }

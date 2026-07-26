@@ -43,6 +43,47 @@ class EmailDomainIsNotTest extends TestCase
         );
     }
 
+    #[TestWith(['not-an-email'])]
+    #[TestWith([''])]
+    #[TestWith(['@example.com'])]
+    #[TestWith(['hello@'])]
+    #[Test]
+    public function rule_fails_gracefully_if_the_value_cannot_be_parsed_as_an_email(string $value): void
+    {
+        $failed = false;
+
+        (new EmailDomainIsNot(['example.com']))->validate(
+            attribute: 'email',
+            value: $value,
+            fail: function (string $message) use (&$failed): void {
+                $failed = true;
+
+                $this->assertSame('The :attribute must be a valid email address.', $message);
+            },
+        );
+
+        $this->assertTrue($failed);
+    }
+
+    #[TestWith([null])]
+    #[TestWith([123])]
+    #[TestWith([['hello@example.com']])]
+    #[Test]
+    public function rule_fails_gracefully_if_the_value_is_not_a_string(mixed $value): void
+    {
+        $failed = false;
+
+        (new EmailDomainIsNot(['example.com']))->validate(
+            attribute: 'email',
+            value: $value,
+            fail: function () use (&$failed): void {
+                $failed = true;
+            },
+        );
+
+        $this->assertTrue($failed);
+    }
+
     #[Test]
     public function rule_fails_if_the_value_is_a_disposable_email(): void
     {
