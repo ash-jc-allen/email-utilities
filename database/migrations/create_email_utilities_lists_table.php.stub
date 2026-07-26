@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create($this->tableName(), function (Blueprint $table): void {
+            $table->string('name')->primary();
+            $table->json('items');
+            $table->timestamp('updated_at')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists($this->tableName());
+    }
+
+    private function tableName(): string
+    {
+        $table = config('email-utilities.storage.database.table');
+
+        return is_string($table) && $table !== '' ? $table : 'email_utilities_lists';
+    }
+};

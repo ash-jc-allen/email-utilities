@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace AshAllenDesign\EmailUtilities\Tests\Feature\Lists;
 
 use AshAllenDesign\EmailUtilities\Lists\DisposableDomainList;
+use AshAllenDesign\EmailUtilities\Lists\ListType;
+use AshAllenDesign\EmailUtilities\Stores\CacheListStore;
 use AshAllenDesign\EmailUtilities\Tests\Feature\TestCase;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
@@ -58,6 +60,24 @@ class DisposableDomainListTest extends TestCase
         config(['email-utilities.disposable_email_list_path' => './tests/Feature/Lists/disposable-domains-test.json']);
 
         DisposableDomainList::get();
+    }
+
+    #[Test]
+    public function list_is_read_from_the_configured_store(): void
+    {
+        config(['email-utilities.storage.driver' => 'cache']);
+
+        (new CacheListStore())->put(ListType::DisposableDomains, ['customdomain.com', 'hellodomain.com']);
+
+        $this->assertSame(['customdomain.com', 'hellodomain.com'], DisposableDomainList::get());
+    }
+
+    #[Test]
+    public function bundled_list_is_used_if_the_configured_store_does_not_hold_the_list(): void
+    {
+        config(['email-utilities.storage.driver' => 'cache']);
+
+        $this->assertCount(5202, DisposableDomainList::get());
     }
 
     #[Test]

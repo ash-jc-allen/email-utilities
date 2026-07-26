@@ -31,6 +31,7 @@
 - [Config](#config)
     * [Disposable Email Domains List](#disposable-email-domains-list)
     * [Role Accounts List](#role-accounts-list)
+    * [List Storage](#list-storage)
 - [Testing](#testing)
 - [Security](#security)
 - [Contribution](#contribution)
@@ -248,9 +249,9 @@ You can run the `FetchDisposableEmailDomains` command like so:
 php artisan email-utilities:fetch-disposable-domains
 ```
 
-This command will fetch the latest list of disposable email address domains from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) and store the list in the location defined by the `disposable_email_list_path` configuration option.
+This command will fetch the latest list of disposable email address domains from [https://github.com/disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) and store the list using the configured [list storage driver](#list-storage).
 
-Please note, you must set the `dispoable_email_list_path` configuration option for this to work. If this option is left as `null` (the default value), the list will not be fetched.
+Please note, if you're using the default `file` driver, you must set the `disposable_email_list_path` configuration option for this to work. If this option is left as `null` (the default value), the list will not be fetched. The other drivers don't require any additional configuration.
 
 You may want to schedule this command to run on a regular basis to ensure that your list of disposable email address domains is always up-to-date. You can do this in your `routes/console.php` file like so:
 
@@ -288,6 +289,78 @@ Similar to the disposable email domains list, by default, the package uses a bui
 
 ```php
 'role_accounts_list_path' => './storage/app/role_account_list.json',
+```
+
+### List Storage
+
+By default, the package reads and writes the lists using local file paths (the `file` driver), exactly as described above. However, local files aren't always a good fit — for example, on serverless or containerised platforms (such as Laravel Cloud or Vapor) the local filesystem is ephemeral and isn't shared between processes, so a list written by a scheduled `email-utilities:fetch-disposable-domains` run would never be seen by your web requests (or would disappear entirely on the next deploy).
+
+For these setups, you can choose where the lists are stored using the `storage.driver` configuration option:
+
+```php
+'storage' => [
+    'driver' => 'cache', // "file", "disk", "cache", or "database"
+],
+```
+
+Whichever driver you use, if it doesn't hold a list (for example, before the fetch command has run for the first time), the package falls back to its built-in copy.
+
+The available drivers are:
+
+- `file` — Local file paths, using the `disposable_email_list_path` and `role_accounts_list_path` options. This is the default.
+
+- `disk` — A [Laravel filesystem disk](https://laravel.com/docs/filesystem), so the lists can live on S3 or any other configured disk:
+
+    ```php
+    'storage' => [
+        'driver' => 'disk',
+        'disk' => [
+            'disk' => 's3', // `null` uses your default disk
+            'disposable_email_list_path' => 'email-utilities/disposable-domains.json',
+            'role_accounts_list_path' => 'email-utilities/role-accounts.json',
+        ],
+    ],
+    ```
+
+- `cache` — A [Laravel cache store](https://laravel.com/docs/cache):
+
+    ```php
+    'storage' => [
+        'driver' => 'cache',
+        'cache' => [
+            'store' => null, // `null` uses your default store
+            'prefix' => 'email-utilities',
+            'ttl' => null, // lifetime in seconds; `null` stores the lists forever
+        ],
+    ],
+    ```
+
+    > [!WARNING]
+    > The disposable domains list is stored as a single cache item, and some backends cap item sizes. The upstream list currently serializes to roughly 220 KB — comfortably within Redis's limits, but over half of DynamoDB's 400 KB item cap and about a fifth of Memcached's default 1 MB cap. If your cache store is DynamoDB (e.g. Laravel Vapor's default) and the upstream list keeps growing, the fetch command will begin to fail once the cap is exceeded — consider the `database` or `disk` driver instead. If the command does fail, the previously stored list keeps being served.
+
+- `database` — A database table. Publish and run the migration first:
+
+    ```bash
+    php artisan vendor:publish --tag=email-utilities-migrations
+    php artisan migrate
+    ```
+
+    ```php
+    'storage' => [
+        'driver' => 'database',
+        'database' => [
+            'connection' => null, // `null` uses your default connection
+            'table' => 'email_utilities_lists',
+        ],
+    ],
+    ```
+
+You can also register your own driver by extending the `ListStoreManager` (for example, from a service provider's `boot` method) with a class implementing the `AshAllenDesign\EmailUtilities\Contracts\ListStore` interface:
+
+```php
+use AshAllenDesign\EmailUtilities\ListStoreManager;
+
+app(ListStoreManager::class)->extend('redis-json', fn () => new RedisJsonListStore());
 ```
 
 ## Testing
